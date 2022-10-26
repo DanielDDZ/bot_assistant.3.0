@@ -1,4 +1,5 @@
 from classes import AddressBook, Record, Phone, Field
+from datetime import datetime, timedelta
 
 
 def input_error(func):
@@ -21,24 +22,23 @@ def input_error(func):
 @input_error
 def add_new_contact(data):
     name, phone = create_data(data)
-    record_add = Record(name.lower())
-    if Phone.value is True:  # как сделать проверку?
-        record_add.add_phone(phone)
-        addressbook.add_record(record_add)
-        return f'A new contact name: {name} phone: {phone}, has been added.'
-    else:
-        return 'Number must be 10 digits and start with 0'
+    try:
+        birthday = data[2]
+        birthday = datetime.strptime(birthday, "%d %B, %Y").date()
+    except:
+        birthday = ''
+    record_add = Record(name.lower(), birthday if birthday != '' else None)
+    record_add.add_phone(phone)
+    addressbook.add_record(record_add)
+    return f'A new contact name: {name} phone: {phone}, has been added.'
 
 
 @input_error
 def add_new_phone(data):
     name, phone = create_data(data)
     record_add_phone = addressbook.data[name]
-    if Phone.value is True:  # как сделать проверку?
-        record_add_phone.add_phone(phone)
-        return f'A new phone: {phone}, has been added to contact name: {name}.'
-    else:
-        return 'Number must be 10 digits and start with 0'
+    record_add_phone.add_phone(phone)
+    return f'A new phone: {phone}, has been added to contact name: {name}.'
 
 
 @input_error
@@ -95,6 +95,19 @@ def show_iter(count):
             break
 
 
+@input_error
+def birthday_func(data):
+    name = data[0]
+    try:
+        birthday = data[1:]
+        birthday = datetime.strptime(birthday, "%d %B %Y").date()
+    except ValueError:
+        birthday = ''
+    if addressbook.data[name]:
+        record_change = addressbook.data[name]
+        print('Days to birthday:', record_change.days_to_birthday())
+
+
 COMMANDS = {
     'add': add_new_contact,
     'add_phone': add_new_phone,
@@ -106,8 +119,10 @@ COMMANDS = {
     'close': quit_func,
     'exit': quit_func,
     'delete': delete_func,
-    'show_iter': show_iter
+    'show_iter': show_iter,
+    'birthday': birthday_func,
 }
+
 commands = ['add', 'add_phone', 'change', 'phone',
             'hello', 'show all', 'good bye', 'close', 'exit', 'delete', 'show_iter', 'birthday']
 
