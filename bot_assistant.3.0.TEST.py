@@ -1,4 +1,4 @@
-from classes import AddressBook, Record, Phone, Field
+from classesTEST import AddressBook, Record, Phone, Field
 from datetime import datetime, timedelta
 
 
@@ -108,6 +108,17 @@ def birthday_func(data):
         print('Days to birthday:', record_change.days_to_birthday())
 
 
+@input_error
+def find_func(data):
+    part_for_search = data[0]
+    for users in addressbook.values():
+        for el in users.phones.value:
+            if part_for_search in el:
+                print(users)
+        if part_for_search in users.name.value:
+            print(users)
+
+
 COMMANDS = {
     'add': add_new_contact,
     'add_phone': add_new_phone,
@@ -121,10 +132,10 @@ COMMANDS = {
     'delete': delete_func,
     'show_iter': show_iter,
     'birthday': birthday_func,
-}
+    'find': find_func}
 
 commands = ['add', 'add_phone', 'change', 'phone',
-            'hello', 'show all', 'good bye', 'close', 'exit', 'delete', 'show_iter', 'birthday']
+            'hello', 'show all', 'good bye', 'close', 'exit', 'delete', 'show_iter', 'birthday', 'find']
 
 
 def create_data(data):

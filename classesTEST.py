@@ -1,3 +1,4 @@
+import pickle
 from collections import UserDict
 from datetime import datetime, timedelta
 import re
@@ -32,13 +33,24 @@ class AddressBook(UserDict):
         if records:
             yield records
 
+    def write_contacts_to_file(self):
+        with open('data_notebook.txt', 'wb') as file:
+            pickle.dump(self.data, file)
+
+    def read_contacts_from_file(self):
+        try:
+            with open('data_notebook.txt', 'rb') as file:
+                contacts_archive = pickle.load(file)
+                return contacts_archive
+        except FileNotFoundError:
+            pass
+
 
 class Name(Field):
     pass
 
 
 class Phone(Field):
-
     def __init__(self, value: str):
         super().__init__(value)
         self.value = value
@@ -53,7 +65,6 @@ class Phone(Field):
 
 
 class Birthday(Field):
-
     @Field.value.setter
     def value(self, birthday):
         if int(birthday.year) <= 2022 and int(birthday.month) <= 12 and int(birthday.day) <= 31:
